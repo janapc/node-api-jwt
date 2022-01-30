@@ -1,7 +1,9 @@
-const jwt = require("jsonwebtoken");
-
 const UserModel = require("../models/UsersModel");
-const blacklist = require("../database/redis/handleBlacklist");
+const handleToken = require("../utils/handleToken");
+const VerifyEmail = require("../services/email/VerifyEmail");
+
+const generateAddress = (router, token) =>
+  `${process.env.BASE_URL}${router}${token}`;
 
 class UserController {
   async list(req, res) {
@@ -15,7 +17,15 @@ class UserController {
 
   async add(req, res) {
     try {
-      await UserModel.add(req.body);
+      const user = req.body;
+
+      const newUser = await UserModel.add(user);
+
+      const token = handleToken.verifyEmail.create(newUser.id, [1, "h"]);
+      const address = generateAddress("/users/verify_email/", token);
+      const verifyEmail = new VerifyEmail(newUser, address);
+      verifyEmail.sendMail().catch(console.log);
+
       return res.status(201).end();
     } catch (error) {
       return res.status(error.code).json({ error: error.message });
@@ -37,18 +47,33 @@ class UserController {
   }
 
   async login(req, res) {
-    const token = jwt.sign({ id: req.user.id }, process.env.SECRET_JWT, {
-      expiresIn: "15m",
-    });
-    res.set("Authorization", token);
+    const accessToken = handleToken.access.create(req.user.id, [15, "m"]);
+    const refreshToken = await handleToken.refresh.create(req.user.id, [
+      5,
+      "d",
+    ]);
 
-    return res.status(204).end();
+    res.set("Authorization", accessToken);
+
+    return res.status(200).json({ refreshToken });
   }
 
   async logout(req, res) {
     try {
       const token = req.token;
-      await blacklist.add(token);
+
+      await handleToken.access.invalid(token);
+
+      return res.status(204).end();
+    } catch (error) {
+      return res.status(error.code).json({ error: error.message });
+    }
+  }
+
+  async verifyEmail(req, res) {
+    try {
+      await UserModel.verifyEmail(req.user.id);
+
       return res.status(204).end();
     } catch (error) {
       return res.status(error.code).json({ error: error.message });

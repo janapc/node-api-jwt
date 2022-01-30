@@ -21,8 +21,8 @@ class UserRepository {
           WHERE id = ?
         `,
         [id],
-        (erro, usuario) => {
-          if (erro) {
+        (error, usuario) => {
+          if (error) {
             return reject(HandlerErrors(500, "User not found"));
           }
 
@@ -41,8 +41,8 @@ class UserRepository {
           WHERE email = ?
         `,
         [email],
-        (erro, usuario) => {
-          if (erro) {
+        (error, usuario) => {
+          if (error) {
             return reject(HandlerErrors(500, "User not found"));
           }
 
@@ -53,10 +53,10 @@ class UserRepository {
   }
 
   async add(user) {
-    const query = `INSERT INTO users (name,email, passwordHash) VALUES (?, ?, ?)`;
+    const query = `INSERT INTO users (name, email, passwordHash, emailChecked) VALUES (?, ?, ?, ?)`;
     return new Promise((resolve, reject) => {
-      db.run(query, [user.name, user.email, user.passwordHash], (erro) => {
-        if (erro) return reject(HandlerErrors(500, "Error in create the user"));
+      db.run(query, [user.name, user.email, user.passwordHash, user.emailChecked], (error) => {
+        if (error) return reject(HandlerErrors(500, "Error in create the user"));
 
         return resolve();
       });
@@ -66,9 +66,20 @@ class UserRepository {
   async remove(id) {
     const query = `DELETE FROM users WHERE id = ?`;
     return new Promise((resolve, reject) => {
-      db.run(query, [id], (erro) => {
-        if (erro)
+      db.run(query, [id], (error) => {
+        if (error)
           return reject(HandlerErrors(500, "Error in remover the user"));
+        return resolve();
+      });
+    });
+  }
+
+  async updateFieldEmailChecked(id, emailChecked) {
+    const query = `UPDATE users SET emailChecked = ? WHERE id = ?`;
+    return new Promise((resolve, reject) => {
+      db.run(query, [emailChecked, id], (error) => {
+        if (error)
+          return reject(HandlerErrors(500, "Error in update the user"));
         return resolve();
       });
     });

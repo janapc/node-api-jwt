@@ -12,11 +12,11 @@ class PostModel {
   }
 
   async add(post) {
-    this.validationFields(post);
+    this.#validationFields(post);
     return await PostsRepositories.add(post);
   }
 
-  validationFields(post) {
+  #validationFields(post) {
     fieldTypeStringNotNull(post.title, "title");
     fieldTypeStringNotNull(post.content, "content");
     fieldLengthMax(post.content, 140, "content");
