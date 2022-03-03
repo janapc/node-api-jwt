@@ -24,7 +24,11 @@ class PostsController {
 
       return res.status(201).end();
     } catch (error) {
-      res.status(error.code || 500).json({ error: error.message });
+      res.status(error.code || 500).json({
+        error:
+          error.message ||
+          "There was a problem performing the operation. Try later",
+      });
     }
   }
 
@@ -40,7 +44,11 @@ class PostsController {
       const result = await PostsModel.getById(req.params.id, req.user.id);
       return res.json(result);
     } catch (error) {
-      return res.status(error.code || 500).json({ error: error.message });
+      return res.status(error.code || 500).json({
+        error:
+          error.message ||
+          "There was a problem performing the operation. Try later",
+      });
     }
   }
 
@@ -63,7 +71,11 @@ class PostsController {
       await PostsModel.remove(post.id, post.authorId);
       return res.status(204).end();
     } catch (error) {
-      return res.status(error.code || 500).json({ error: error.message });
+      return res.status(error.code || 500).json({
+        error:
+          error.message ||
+          "There was a problem performing the operation. Try later",
+      });
     }
   }
 
@@ -86,7 +98,11 @@ class PostsController {
 
       return res.json(result);
     } catch (error) {
-      return res.status(error.code || 500).json({ error: error.message });
+      return res.status(error.code || 500).json({
+        error:
+          error.message ||
+          "There was a problem performing the operation. Try later",
+      });
     }
   }
 }

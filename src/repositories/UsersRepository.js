@@ -6,7 +6,13 @@ class UserRepository {
     const query = `SELECT * FROM users`;
     return new Promise((resolve, reject) => {
       db.all(query, (error, row) => {
-        if (error) return reject(new HandlerErrors(500, "Error internal"));
+        if (error)
+          return reject(
+            new HandlerErrors(
+              500,
+              "There was a problem performing the operation. Try later"
+            )
+          );
         return resolve(row);
       });
     });
@@ -23,7 +29,12 @@ class UserRepository {
         [id],
         (error, usuario) => {
           if (error) {
-            return reject(new HandlerErrors(500, "Error internal"));
+            return reject(
+              new HandlerErrors(
+                500,
+                "There was a problem performing the operation. Try later"
+              )
+            );
           }
 
           return resolve(usuario);
@@ -43,7 +54,12 @@ class UserRepository {
         [email],
         (error, usuario) => {
           if (error) {
-            return reject(new HandlerErrors(500, "Error internal"));
+            return reject(
+              new HandlerErrors(
+                500,
+                "There was a problem performing the operation. Try later"
+              )
+            );
           }
 
           return resolve(usuario);
@@ -65,7 +81,13 @@ class UserRepository {
           user.role,
         ],
         (error) => {
-          if (error) return reject(new HandlerErrors(500, "Error internal"));
+          if (error)
+            return reject(
+              new HandlerErrors(
+                500,
+                "There was a problem performing the operation. Try later"
+              )
+            );
 
           return resolve();
         }
@@ -77,7 +99,13 @@ class UserRepository {
     const query = `DELETE FROM users WHERE id = ?`;
     return new Promise((resolve, reject) => {
       db.run(query, [id], (error) => {
-        if (error) return reject(new HandlerErrors(500, "Error internal"));
+        if (error)
+          return reject(
+            new HandlerErrors(
+              500,
+              "There was a problem performing the operation. Try later"
+            )
+          );
         return resolve();
       });
     });
@@ -87,7 +115,13 @@ class UserRepository {
     const query = `UPDATE users SET emailChecked = ? WHERE id = ?`;
     return new Promise((resolve, reject) => {
       db.run(query, [emailChecked, id], (error) => {
-        if (error) return reject(new HandlerErrors(500, "Error internal"));
+        if (error)
+          return reject(
+            new HandlerErrors(
+              500,
+              "There was a problem performing the operation. Try later"
+            )
+          );
         return resolve();
       });
     });
@@ -97,7 +131,13 @@ class UserRepository {
     const query = `UPDATE users SET passwordHash = ? WHERE id = ?`;
     return new Promise((resolve, reject) => {
       db.run(query, [password, id], (error) => {
-        if (error) return reject(new HandlerErrors(500, "Error internal"));
+        if (error)
+          return reject(
+            new HandlerErrors(
+              500,
+              "There was a problem performing the operation. Try later"
+            )
+          );
         return resolve();
       });
     });

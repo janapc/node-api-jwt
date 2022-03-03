@@ -39,7 +39,11 @@ class UsersController {
 
       return res.json(result);
     } catch (error) {
-      res.status(error.code || 500).json({ error: error.message });
+      res.status(error.code || 500).json({
+        error:
+          error.message ||
+          "There was a problem performing the operation. Try later",
+      });
     }
   }
 
@@ -63,7 +67,11 @@ class UsersController {
 
       return res.status(201).end();
     } catch (error) {
-      return res.status(error.code || 500).json({ error: error.message });
+      return res.status(error.code || 500).json({
+        error:
+          error.message ||
+          "There was a problem performing the operation. Try later",
+      });
     }
   }
 
@@ -81,7 +89,11 @@ class UsersController {
       await UsersModel.remove(req.params.id);
       return res.status(204).end();
     } catch (error) {
-      return res.status(error.code || 500).json({ error: error.message });
+      return res.status(error.code || 500).json({
+        error:
+          error.message ||
+          "There was a problem performing the operation. Try later",
+      });
     }
   }
 
@@ -104,7 +116,11 @@ class UsersController {
 
       return res.status(200).json({ refreshToken });
     } catch (error) {
-      return res.status(error.code || 500).json({ error: error.message });
+      return res.status(error.code || 500).json({
+        error:
+          error.message ||
+          "There was a problem performing the operation. Try later",
+      });
     }
   }
 
@@ -123,7 +139,11 @@ class UsersController {
 
       return res.status(204).end();
     } catch (error) {
-      return res.status(error.code || 500).json({ error: error.message });
+      return res.status(error.code || 500).json({
+        error:
+          error.message ||
+          "There was a problem performing the operation. Try later",
+      });
     }
   }
 
@@ -140,7 +160,11 @@ class UsersController {
 
       return res.status(204).end();
     } catch (error) {
-      return res.status(error.code || 500).json({ error: error.message });
+      return res.status(error.code || 500).json({
+        error:
+          error.message ||
+          "There was a problem performing the operation. Try later",
+      });
     }
   }
 
@@ -159,7 +183,11 @@ class UsersController {
       if (error.message === "User is not found") {
         return res.json({ message: messageDefault });
       }
-      return res.status(error.code || 500).json({ error: error.message });
+      return res.status(error.code || 500).json({
+        error:
+          error.message ||
+          "There was a problem performing the operation. Try later",
+      });
     }
   }
 
@@ -185,7 +213,11 @@ class UsersController {
 
       return res.json({ message: "Your password has updated with success" });
     } catch (error) {
-      return res.status(error.code || 500).json({ error: error.message });
+      return res.status(error.code || 500).json({
+        error:
+          error.message ||
+          "There was a problem performing the operation. Try later",
+      });
     }
   }
 }
