@@ -18,6 +18,21 @@ app.use(
 
 app.use(bodyParser.json());
 
+app.use((req, res, next) => {
+  const accept = req.get("Accept");
+  const typesAvailable = ["application/json", "*/*"];
+
+  if (!accept || !typesAvailable.includes(accept)) {
+    return res.status(406).end();
+  }
+
+  res.set({
+    "Content-Type": "application/json",
+  });
+
+  next();
+});
+
 const routes = require("./routers/routes");
 routes(app);
 

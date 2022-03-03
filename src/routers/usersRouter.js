@@ -1,24 +1,52 @@
 const UsersController = require("../controllers/UsersController");
-const authMiddlewares = require("../utils/authMiddlewares");
+
+const middlewaresAuthentication = require("../middlwares/authentication");
+const middlewaresAuthorization = require("../middlwares/authorization");
+const middlewaresTryAuthentication = require("../middlwares/tryAuthentication");
+const middlewaresTryAuthorization = require("../middlwares/tryAuthorization");
 
 module.exports = (app) => {
   app
     .route("/users/update_token")
-    .post(authMiddlewares.refresh, UsersController.login);
-  app.route("/users").get(UsersController.list);
-  app.route("/users").post(UsersController.add);
+    .post(middlewaresAuthentication.refresh, UsersController.login);
+
+  app
+    .route("/users")
+    .get(
+      [
+        middlewaresTryAuthentication,
+        middlewaresTryAuthorization("users", "read"),
+      ],
+      UsersController.list
+    )
+    .post(UsersController.add);
+
   app
     .route("/users/verify_email/:token")
-    .get(authMiddlewares.verifyEmail, UsersController.verifyEmail);
+    .get(middlewaresAuthentication.verifyEmail, UsersController.verifyEmail);
+
   app
     .route("/users/:id")
-    .delete(authMiddlewares.bearer, UsersController.remove);
+    .delete(
+      [
+        middlewaresAuthentication.bearer,
+        middlewaresAuthentication.local,
+        middlewaresAuthorization("users", "delete"),
+      ],
+      UsersController.remove
+    );
 
-  app.route("/users/login").post(authMiddlewares.local, UsersController.login);
+  app
+    .route("/users/login")
+    .post(middlewaresAuthentication.local, UsersController.login);
+
   app
     .route("/users/logout")
     .post(
-      [authMiddlewares.refresh, authMiddlewares.bearer],
+      [middlewaresAuthentication.refresh, middlewaresAuthentication.bearer],
       UsersController.logout
     );
+
+  app.route("/users/forgot_password").post(UsersController.forgotPassword);
+  app.route("/users/redefine_password").post(UsersController.redefinePassword);
 };

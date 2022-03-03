@@ -6,7 +6,7 @@ const postsSchema = require("./postsSchema");
 const db = new sqlite3.Database("db.sqlite");
 
 db.serialize(() => {
-  db.run("PRAGMA foreign_keys=ON");
+  db.run('PRAGMA foreign_keys=ON')
   db.run(postsSchema);
   db.run(usersSchema);
 });

@@ -24,4 +24,16 @@ function fieldLengthMax(value, max, name) {
   }
 }
 
-module.exports = { fieldTypeStringNotNull, fieldLengthMax, fieldLengthMin };
+function fieldRole(value, name) {
+  const roles = ["admin", "publisher", "subscriber"];
+  if (roles.indexOf(value) === -1) {
+    throw new HandlerErrors(400, `The ${name} field is invalid!`);
+  }
+}
+
+module.exports = {
+  fieldTypeStringNotNull,
+  fieldLengthMax,
+  fieldLengthMin,
+  fieldRole,
+};

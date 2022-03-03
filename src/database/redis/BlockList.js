@@ -1,6 +1,3 @@
-const jwt = require("jsonwebtoken");
-const crypto = require("crypto");
-
 const db = require("./index");
 const HandleRedis = require("./HandleRedis");
 

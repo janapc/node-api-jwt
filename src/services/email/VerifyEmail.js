@@ -1,6 +1,6 @@
-const Email = require("./Email");
+const Emails = require("./Emails");
 
-class VerifyEmail extends Email {
+class VerifyEmail extends Emails {
   constructor(user, address) {
     super();
     this.from = '"Blog Code" <noreply@blogcode.com.br>';

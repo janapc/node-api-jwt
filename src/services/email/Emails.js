@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
 
-class Email {
+class Emails {
   async sendMail() {
     const configEmail = await this.#configurationEmail();
     const transport = nodemailer.createTransport(configEmail);
@@ -30,4 +30,4 @@ class Email {
     }
   }
 }
-module.exports = Email;
+module.exports = Emails;

@@ -2,7 +2,7 @@ const passport = require("passport");
 const UsersModel = require("../models/UsersModel");
 
 const Users = require("../models/UsersModel");
-const handleToken = require("./handleToken");
+const handleToken = require("../utils/handleToken");
 
 const typeErrors = {
   JsonWebTokenError: (error) => ({ error: error.message }),
@@ -21,6 +21,8 @@ module.exports = {
       if (!user) return res.status(401).end();
 
       req.user = user;
+      req.hasAuthentication = true;
+
       next();
     })(req, res, next);
   },
@@ -36,6 +38,7 @@ module.exports = {
 
       req.user = user;
       req.token = info.token;
+      req.hasAuthentication = true;
 
       next();
     })(req, res, next);

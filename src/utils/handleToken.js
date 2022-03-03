@@ -3,8 +3,9 @@ const crypto = require("crypto");
 const moment = require("moment");
 
 const HandlerErrors = require("../utils/handlerErrors");
-const Allowlist = require("../database/redis/Allowlist");
-const BlockList = require("../database/redis/Blocklist");
+const AllowList = require("../database/redis/AllowList");
+const BlockList = require("../database/redis/BlockList");
+const ForgotPasswordList = require("../database/redis/ForgotPasswordList");
 
 module.exports = {
   access: {
@@ -30,7 +31,7 @@ module.exports = {
     },
   },
   refresh: {
-    allowlist: new Allowlist(),
+    allowlist: new AllowList(),
     name: "refreshToken",
     async create(id, [time, day]) {
       const tokenHash = crypto.randomBytes(24).toString("hex");
@@ -52,7 +53,7 @@ module.exports = {
     },
     async invalid(token) {
       await this.allowlist.delete(token);
-    }
+    },
   },
   verifyEmail: {
     create(id, [time, day]) {
@@ -65,5 +66,27 @@ module.exports = {
 
       return payload.id;
     },
-  }
+  },
+  forgotPassword: {
+    name: "forgotPassword",
+    forgotPasswordList: new ForgotPasswordList(),
+    async create(id, [time, day]) {
+      const tokenHash = crypto.randomBytes(24).toString("hex");
+      const dateExp = moment().add(time, day).unix();
+
+      await this.forgotPasswordList.set(tokenHash, id, dateExp);
+
+      return tokenHash;
+    },
+    async verify(token) {
+      if (!token)
+        throw new HandlerErrors(400, `The field ${this.name} is mandatory`);
+
+      const id = await this.forgotPasswordList.get(token);
+      if (!id)
+        throw new HandlerErrors(400, `The field ${this.name} is invalid`);
+
+      return id;
+    },
+  },
 };

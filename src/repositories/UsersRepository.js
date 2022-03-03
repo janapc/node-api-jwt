@@ -6,7 +6,7 @@ class UserRepository {
     const query = `SELECT * FROM users`;
     return new Promise((resolve, reject) => {
       db.all(query, (error, row) => {
-        if (error) return reject(HandlerErrors(500, "Error in list the users"));
+        if (error) return reject(new HandlerErrors(500, "Error internal"));
         return resolve(row);
       });
     });
@@ -23,7 +23,7 @@ class UserRepository {
         [id],
         (error, usuario) => {
           if (error) {
-            return reject(HandlerErrors(500, "User not found"));
+            return reject(new HandlerErrors(500, "Error internal"));
           }
 
           return resolve(usuario);
@@ -43,7 +43,7 @@ class UserRepository {
         [email],
         (error, usuario) => {
           if (error) {
-            return reject(HandlerErrors(500, "User not found"));
+            return reject(new HandlerErrors(500, "Error internal"));
           }
 
           return resolve(usuario);
@@ -53,13 +53,23 @@ class UserRepository {
   }
 
   async add(user) {
-    const query = `INSERT INTO users (name, email, passwordHash, emailChecked) VALUES (?, ?, ?, ?)`;
+    const query = `INSERT INTO users (name, email, passwordHash, emailChecked, role) VALUES (?, ?, ?, ?, ?)`;
     return new Promise((resolve, reject) => {
-      db.run(query, [user.name, user.email, user.passwordHash, user.emailChecked], (error) => {
-        if (error) return reject(HandlerErrors(500, "Error in create the user"));
+      db.run(
+        query,
+        [
+          user.name,
+          user.email,
+          user.passwordHash,
+          user.emailChecked,
+          user.role,
+        ],
+        (error) => {
+          if (error) return reject(new HandlerErrors(500, "Error internal"));
 
-        return resolve();
-      });
+          return resolve();
+        }
+      );
     });
   }
 
@@ -67,8 +77,7 @@ class UserRepository {
     const query = `DELETE FROM users WHERE id = ?`;
     return new Promise((resolve, reject) => {
       db.run(query, [id], (error) => {
-        if (error)
-          return reject(HandlerErrors(500, "Error in remover the user"));
+        if (error) return reject(new HandlerErrors(500, "Error internal"));
         return resolve();
       });
     });
@@ -78,8 +87,17 @@ class UserRepository {
     const query = `UPDATE users SET emailChecked = ? WHERE id = ?`;
     return new Promise((resolve, reject) => {
       db.run(query, [emailChecked, id], (error) => {
-        if (error)
-          return reject(HandlerErrors(500, "Error in update the user"));
+        if (error) return reject(new HandlerErrors(500, "Error internal"));
+        return resolve();
+      });
+    });
+  }
+
+  async updatePassword(password, id) {
+    const query = `UPDATE users SET passwordHash = ? WHERE id = ?`;
+    return new Promise((resolve, reject) => {
+      db.run(query, [password, id], (error) => {
+        if (error) return reject(new HandlerErrors(500, "Error internal"));
         return resolve();
       });
     });
